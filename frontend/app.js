@@ -8,28 +8,36 @@ const getTasks = async () => {
     const tasks = await response.json();
     renderTasks(tasks);
 };
+
 // Функция для рендеринга задач
 const renderTasks = (tasks) => {
     taskList.innerHTML = ''; // Очищаем текущий список задач
     tasks.forEach(task => {
         const li = document.createElement('li');
-        li.textContent = task.title;
-        li.classList.add(".li_flex")
-        // Добавление кнопки для удаления задачи
+        const taskText = document.createElement('p'); // Добавляем элемент для текста задачи
+        taskText.textContent = task.title;
+        taskText.classList.add('task_text'); // Добавляем класс для текста задачи
+
+        // Добавляем кнопки
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Удалить';
-        deleteButton.classList.add('delete_btn')
+        deleteButton.classList.add('delete_btn');
         deleteButton.onclick = () => deleteTask(task.id);
-        li.appendChild(deleteButton);
 
-        // Добавление кнопки для удаления задачи
         const updateButton = document.createElement('button');
         updateButton.textContent = 'Редактировать';
-        updateButton.classList.add('update_btn')
-        li.appendChild(updateButton);
-        // Отмечаем задачу как завершенную
+        updateButton.classList.add('update_btn');
+        updateButton.onclick = () => editTask(li, task.id, task.title);
+
+        // Добавляем завершение задачи
         li.className = task.completed ? 'completed' : '';
-        li.onclick = () => updateTask(task.id, !task.completed); // Меняем статус завершенности
+        taskText.onclick = () => updateTask(task.id, !task.completed);
+
+        // Добавляем элементы в список
+        li.appendChild(taskText);
+        li.appendChild(updateButton);
+        li.appendChild(deleteButton);
+
         taskList.appendChild(li);
     });
 };
@@ -37,36 +45,75 @@ const renderTasks = (tasks) => {
 // Функция для добавления задачи
 const addTask = async () => {
     const title = taskInput.value;
-    if (!title) return; // Проверяем, не пустое ли поле ввода
+    if (!title) return;
     await fetch('http://localhost/sites/Block/backend/index.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
         },
-        body: new URLSearchParams({ title }) // Кодируем параметры
+        body: JSON.stringify({ title })
     });
-    taskInput.value = ''; // Очищаем поле ввода
-    getTasks(); // Обновляем список задач
+    taskInput.value = '';
+    getTasks();
 };
 
 // Функция для удаления задачи
 const deleteTask = async (id) => {
     await fetch('http://localhost/sites/Block/backend/index.php', {
-
         method: 'DELETE',
-        body: new URLSearchParams({ id }) // Кодируем параметры
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({id})
     });
-    getTasks(); // Обновляем список задач
+    getTasks();
 };
 
 // Функция для обновления статуса задачи
 const updateTask = async (id, completed) => {
     await fetch('http://localhost/sites/Block/backend/index.php', {
         method: 'PUT',
-        body: new URLSearchParams({ id, completed }) // Кодируем параметры
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({id,completed})
     });
-    getTasks(); // Обновляем список задач
+    getTasks();
 };
+
+// Функция для редактирования задачи
+// Функция для редактирования задачи
+const editTask = (li, id, currentTitle) => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentTitle;
+    input.classList.add('edit_input');
+
+    // Создаем кнопку для сохранения изменений
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Сохранить';
+    saveButton.classList.add('save_btn');
+    saveButton.onclick = async () => {
+        const newTitle = input.value;
+        if (newTitle && newTitle !== currentTitle) { // Проверяем, что заголовок был изменен
+            await fetch('http://localhost/sites/Block/backend/index.php', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, title: newTitle }) // Передаем только ID и новый заголовок
+            });
+            getTasks(); // Перезагружаем список задач
+        }
+    };
+
+    // Заменяем текст задачи на поле ввода и кнопку "Сохранить"
+    li.innerHTML = '';
+    li.appendChild(input);
+    li.appendChild(saveButton);
+    input.focus(); // Фокус на поле ввода
+};
+
 
 // Подключение обработчика события
 addTaskButton.onclick = addTask;

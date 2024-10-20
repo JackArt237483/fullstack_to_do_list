@@ -1,66 +1,176 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
     margin: 0;
     padding: 20px;
+    color: #555;
+    transition: background-color 0.5s ease;
 }
 
 .container {
     max-width: 600px;
     margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
 }
 
 h1 {
     text-align: center;
+    margin-bottom: 25px;
+    color: #444;
+    font-size: 2em;
+    font-weight: 600;
+    position: relative;
+}
+
+h1:after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 4px;
+    background: #6c63ff;
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+.task-input-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 15px;
 }
 
 input {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    flex-grow: 1;
+    padding: 15px;
+    border: 1px solid #dde2e7;
+    border-radius: 10px;
+    font-size: 16px;
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9fafc;
+}
+
+input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
+    background-color: #fff;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #5cb85c;
-    color: white;
+    padding: 15px;
+    background-color: #6c63ff;
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 6px 15px rgba(108, 99, 255, 0.2);
 }
 
 button:hover {
-    background-color: #4cae4c;
+    background-color: #5a53e0;
+    transform: translateY(-3px);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 ul {
     list-style: none;
     padding: 0;
-}
-.delete_btn{
-    margin-top: 30px;
-    background-color: red;
-}
-.update_btn{
-    margin-top: 15px;
-    background-color: #5cb85c;
-}
-li{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #ccc;
+    margin: 20px;
 }
 
-li.completed {
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+li:hover {
+    background-color: #f7f7f7;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+li.completed .task-text {
     text-decoration: line-through;
-    color: #999;
+    color: #aaa;
+}
+
+.task-text {
+    flex-grow: 1;
+    margin-right: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+button.delete_btn {
+    background-color: #ff5a5f;
+    transition: background-color 0.3s ease;
+}
+
+button.delete_btn:hover {
+    background-color: #e04a4a;
+}
+
+button.update_btn {
+    background-color: #56ccf2;
+    transition: background-color 0.3s ease;
+}
+
+button.update_btn:hover {
+    background-color: #45b8da;
+}
+
+.edit_input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #dde2e7;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f9fafc;
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edit_input:focus {
+    border-color: #56ccf2;
+    box-shadow: 0 0 12px rgba(86, 204, 242, 0.4);
+    background-color: #fff;
+}
+
+.save_btn {
+    background-color: #6c63ff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.save_btn:hover {
+    background-color: #5a53e0;
+    transform: translateY(-2px);
 }

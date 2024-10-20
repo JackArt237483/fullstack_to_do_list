@@ -2,65 +2,72 @@
 include "db.php";
 global $db;
 header('Content-Type: application/json');
-// Получение задач с таблицы
+
+// Получение задач
 if ($_SERVER['REQUEST_METHOD'] === "GET") {
-    // выбираем все задачи
     $stmt = $db->prepare("SELECT * FROM tasks");
-    $stmt->execute(); // Не забывайте выполнять запрос
-    // извлекаем все задачи в виде массива PHP
+    $stmt->execute();
     $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    // преобразование в JSON формате
     echo json_encode($tasks);
-    // завершение скрипта
     exit();
 }
 
-// ОТПРАВКА НА СЕРВЕР ДЛЯ ЭТОГО ЗАПРОС
+// Добавление задачи
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['title'])) {
-        $title = $_POST['title'];
-        // подготовка SQL запрос для вставки в таблицу
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (isset($input['title'])) {
+        $title = $input['title'];
         $stmt = $db->prepare("INSERT INTO tasks (title) VALUES (:title)");
-        // выполняем запрос подготовленный
         $stmt->execute(['title' => $title]);
-        // завершение скрипта
+        echo json_encode(['success' => true, 'message' => 'Task added']);
         exit();
     } else {
-        echo json_encode(['error' => 'Title not provided']); // Вернуть ошибку, если title не установлен
+        echo json_encode(['error' => 'Title not provided']);
         exit();
     }
 }
 
-// Удаление конкретного элемента
+// Удаление задачи
 if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
-    parse_str(file_get_contents("php://input"), $_DELETE);
-    if (isset($_DELETE['id'])) {
-        // ПОЛУЧЕНИЕ ЭЛЕМЕНТА ;
-        $id = $_DELETE['id'];
-        // ПОДГОТОВКА SQL ЗАПРОСА ДЛЯ УДАЛЕНИЯ ЭЛЕМЕНТА
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (isset($input['id'])) {
+        $id = $input['id'];
         $stmt = $db->prepare("DELETE FROM tasks WHERE id = :id");
-        // Выполнение запроса
-        $stmt->execute(["id" => $id]);
+        $stmt->execute(['id' => $id]);
+        echo json_encode(['success' => true, 'message' => 'Task deleted']);
         exit();
     } else {
-        echo json_encode(['error' => 'ID not provided for deletion']); // Вернуть ошибку, если id не установлен
+        echo json_encode(['error' => 'ID not provided for deletion']);
         exit();
     }
 }
 
-// ОБНОВЛЕНИЕ ЗАДАЧИ ПО ID
+// Обновление задачи
+// Обновление задачи
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    parse_str(file_get_contents('php://input'), $_PUT);
-    if (isset($_PUT['id']) && isset($_PUT['completed'])) {
-        $id = $_PUT['id'];
-        $completed = $_PUT['completed'] ? 1 : 0;
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (isset($input['id'])) {
+        $id = $input['id'];
+        $completed = isset($input['completed']) ? ($input['completed'] ? 1 : 0) : null;
+        $title = isset($input['title']) ? $input['title'] : null;
 
-        $stmt = $db->prepare('UPDATE tasks SET completed = :completed WHERE id = :id');
-        $stmt->execute(['completed' => $completed, 'id' => $id]);
+        // Обновление только тех полей, которые переданы
+        if ($title !== null) {
+            $stmt = $db->prepare("UPDATE tasks SET title = :title WHERE id = :id");
+            $stmt->execute(['title' => $title, 'id' => $id]);
+            echo json_encode(['success' => true, 'message' => 'Task title updated']);
+        } else if ($completed !== null) {
+            $stmt = $db->prepare("UPDATE tasks SET completed = :completed WHERE id = :id");
+            $stmt->execute(['completed' => $completed, 'id' => $id]);
+            echo json_encode(['success' => true, 'message' => 'Task status updated']);
+        } else {
+            echo json_encode(['error' => 'No valid data provided']);
+        }
         exit();
     } else {
-        echo json_encode(['error' => 'ID or completed status not provided']); // Вернуть ошибку, если id или completed не установлены
+        echo json_encode(['error' => 'ID not provided']);
         exit();
     }
 }
+
 ?>
