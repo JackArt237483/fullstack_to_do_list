@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход</title>
-    <link rel="stylesheet" href="style.css"> <!-- Подключите ваш CSS файл -->
+    <link rel="stylesheet" href="need.css"> <!-- Подключите ваш CSS файл -->
 </head>
 <body>
 
-<div class="container">
-    <h1>Вход</h1>
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="Логин" required>
-        <input type="password" id="password" placeholder="Пароль" required>
-        <button type="submit">Войти</button>
+<div class="login-container">
+    <h1 class="login-title">Вход</h1>
+    <form id="loginForm" class="login-form">
+        <input type="text" id="username" class="login-input" placeholder="Логин" required>
+        <input type="password" id="password" class="login-input" placeholder="Пароль" required>
+        <button type="submit" class="login-button">Войти</button>
     </form>
-    <p>Еще нет аккаунта? <a href="register.html">Зарегистрируйтесь</a></p>
+    <p class="login-text">Еще нет аккаунта? <a href="register.html" class="login-link">Зарегистрируйтесь</a></p>
 </div>
 
-<script src="script.js"></script> <!-- Подключите ваш JavaScript файл -->
+<script src="data.js"></script>
 </body>
 </html>

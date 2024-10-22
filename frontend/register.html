@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="need.css">
 </head>
 <body>
 <div class="container">
     <h1>Регистрация</h1>
-    <form action="register.php" method="POST">
-        <input type="text" name="username" placeholder="Имя пользователя" required>
-        <input type="email" name="email" placeholder="Электронная почта" required>
-        <input type="tel" name="phone" placeholder="Номер телефона" required>
-        <input type="password" name="password" placeholder="Пароль" required>
-        <button type="submit">Зарегистрироваться</button>
+    <form id="registerForm"  action="data.php" method="POST">
+        <input type="text" name="username" id="username" class="form-input" placeholder="Имя пользователя" required>
+        <input type="email" name="email" id="email" class="form-input" placeholder="Электронная почта" required>
+        <input type="tel" name="phone" id="phone" class="form-input" placeholder="Номер телефона" required>
+        <input type="password" name="password" id="password" class="form-input" placeholder="Пароль" required>
+        <button type="submit" class="form-button">Зарегистрироваться</button>
     </form>
-    <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
+    <p>Уже есть аккаунт? <a href="login.html" class="form-link">Войти</a></p>
 </div>
 </body>
+<script src="data.js"></script>
 </html>

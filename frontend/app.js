@@ -1,14 +1,12 @@
 const taskInput = document.getElementById('taskInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const taskList = document.getElementById('taskList');
-
 // Функция для получения задач
 const getTasks = async () => {
     const response = await fetch('http://localhost/sites/Block/backend/index.php');
     const tasks = await response.json();
     renderTasks(tasks);
 };
-
 // Функция для рендеринга задач
 const renderTasks = (tasks) => {
     taskList.innerHTML = ''; // Очищаем текущий список задач
@@ -41,7 +39,6 @@ const renderTasks = (tasks) => {
         taskList.appendChild(li);
     });
 };
-
 // Функция для добавления задачи
 const addTask = async () => {
     const title = taskInput.value;
@@ -56,7 +53,6 @@ const addTask = async () => {
     taskInput.value = '';
     getTasks();
 };
-
 // Функция для удаления задачи
 const deleteTask = async (id) => {
     await fetch('http://localhost/sites/Block/backend/index.php', {
@@ -68,7 +64,6 @@ const deleteTask = async (id) => {
     });
     getTasks();
 };
-
 // Функция для обновления статуса задачи
 const updateTask = async (id, completed) => {
     await fetch('http://localhost/sites/Block/backend/index.php', {
@@ -80,7 +75,6 @@ const updateTask = async (id, completed) => {
     });
     getTasks();
 };
-
 // Функция для редактирования задачи
 // Функция для редактирования задачи
 const editTask = (li, id, currentTitle) => {
@@ -113,10 +107,7 @@ const editTask = (li, id, currentTitle) => {
     li.appendChild(saveButton);
     input.focus(); // Фокус на поле ввода
 };
-
-
 // Подключение обработчика события
 addTaskButton.onclick = addTask;
-
 // Инициализация списка задач при загрузке страницы
 getTasks();
