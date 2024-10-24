@@ -1,6 +1,7 @@
 const taskInput = document.getElementById('taskInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const taskList = document.getElementById('taskList');
+const logoutButton = document.getElementById('logoutButton')
 // Функция для получения задач
 const getTasks = async () => {
     const response = await fetch('http://localhost/sites/Block/backend/index.php');
@@ -76,7 +77,6 @@ const updateTask = async (id, completed) => {
     getTasks();
 };
 // Функция для редактирования задачи
-// Функция для редактирования задачи
 const editTask = (li, id, currentTitle) => {
     const input = document.createElement('input');
     input.type = 'text';
@@ -111,3 +111,15 @@ const editTask = (li, id, currentTitle) => {
 addTaskButton.onclick = addTask;
 // Инициализация списка задач при загрузке страницы
 getTasks();
+
+if (logoutButton) {
+    logoutButton.addEventListener('click', function () {
+        localStorage.removeItem('isLoggedIn')
+        window.location.href = 'login.html'
+    })
+}
+
+// Проверка аутентификации
+if (window.location.pathname === 'index.html' && !localStorage.getItem('isLoggedIn')) {
+    window.location.href = 'login.html'
+}

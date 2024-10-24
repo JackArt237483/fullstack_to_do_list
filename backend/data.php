@@ -1,57 +1,92 @@
 <?php
+    session_start();
     include "db.php";
     global $db;
     header('Content-type: application/json');
-    if($_SERVER['REQUEST_METHOD'] === 'POST'){
-        $action = $_POST['action'];
 
-        if($action === 'register'){
-            registerUser($db);
-        } elseif($action === 'login') {
-            loginUser($db);
-        } else{
-            echo json_encode(['error' => 'Непрвильное действие']);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = json_decode(file_get_contents('php://input'),true);
+        $action = $data['action'] ?? null;
+
+        if ($action === 'register') {
+            registerUser($db,$data);
+        } elseif ($action === 'login') {
+            loginUser($db,$data);
+        } else {
+            // Убедитесь, что здесь есть обработка некорректных действий
+            echo json_encode(['error' => 'Неправильное действие. Пожалуйста, проверьте отправляемые данные.']);
         }
         exit();
     }
-    function registerUser($db){
-        $username = $_POST['username'] ?? null;
-        $password = $_POST['password'] ?? null;
-        $phone = $_POST['phone'] ?? null;
-        $email = $_POST['email'] ?? null;
-        // проверка на заполенные поля если они заполенены то происходит проверка
-        if($username && $password && $phone && $email){
+
+    // Функция для регистрации пользователя
+    function registerUser($db, $data): void
+    {
+        // Получаем данные из POST-запроса
+        $username = $data['username'] ?? null;
+        $password = $data['password'] ?? null;
+        $phone = $data['phone'] ?? null;
+        $email = $data['email'] ?? null;
+        // Проверяем, что все данные заполнены
+        if ($username && $password && $phone && $email) {
+            // Проверяем, существует ли уже пользователь с таким email
             $stmt = $db->prepare('SELECT * FROM users WHERE email = :email');
-            $stmt->excute(['email' => $email]);
-            // если найден похожий email в то пишет пользватель уже найден
-            if($stmt->rowCount() > 0){
-                echo json_encode(['error' => 'Пользователь уже есть где надо']);
+            $stmt->execute(['email' => $email]);  // Исправлено: используем правильный метод execute
+            // Если пользователь с таким email уже существует
+            if ($stmt->rowCount() > 0) {
+                echo json_encode(['error' => 'Пользователь с таким email уже существует']);
                 return;
             }
-            $hashedPassword  = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $db->prepare('INSERT INTO users (username,password,phone,email) VALUES (:username,:password,:phone,:email)');
-            $stmt->excute(['username'=> $username,'password'=>$hashedPassword,'phone'=>$phone,'email'=>$email]);
-            echo json_encode(['success' => true,'message' => 'Регистрция пользователя успешна']);
-        }else{
-            echo json_encode(['error' => 'Поля не все заполенны']);
+            // Хэшируем пароль
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            // Вставляем нового пользователя в базу данных
+            $stmt = $db->prepare('INSERT INTO users (username, password, phone, email) VALUES (:username, :password, :phone, :email)');
+            $stmt->execute([
+                'username' => $username,
+                'password' => $hashedPassword,
+                'phone' => $phone,
+                'email' => $email
+            ]);
+            // Возвращаем успешный ответ
+            echo json_encode(['success' => true, 'message' => 'Регистрация успешна']);
+        } else {
+            // Если не все поля заполнены
+            echo json_encode(['error' => 'Заполните все поля']);
         }
     }
-    function loginUser($db){
-        $username = $_POST['username'] ?? null;
-        $password = $_POST['password'] ?? null;
 
-        if($username && $password){
+    // Функция для входа в систему
+    function loginUser($db,$data): void
+    {
+        // Получаем данные из POST-запроса
+        $username = $data['username'] ?? null;
+        $password = $data['password'] ?? null;
+
+        // Проверяем, что все поля заполнены
+        if ($username && $password) {
+            // Проверяем, существует ли пользователь с таким именем
             $stmt = $db->prepare('SELECT * FROM users WHERE username = :username');
-            $db->excute(['username' => $username]);
+            $stmt->execute(['username' => $username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if($user && password_verify($password, $user['password'])){
-                echo json_encode(['success'=> true,'message'=>'все поля заполнены правильно','user'=>$user['username']]);
+            if ($user) {
+                // Проверяем, совпадает ли пароль
+                if (password_verify($password, $user['password'])) {
+                    // Сохраняем данные о пользователе в сессию
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    // Возвращаем успешный ответ
+                    echo json_encode(['success' => true, 'message' => 'Вход успешен', 'user' => $user['username']]);
+                } else {
+                    // Неверный пароль
+                    echo json_encode(['error' => 'Неверный пароль']);
+                }
             } else {
-                echo json_encode(['error' => 'Ошибка логина и пароля']);
+                // Пользователь с таким именем не найден
+                echo json_encode(['error' => 'Пользователь не найден']);
             }
         } else {
-            echo json_encode(['error'=> 'где то ошибка произошла']);
+            // Если не все поля заполнены
+            echo json_encode(['error' => 'Заполните все поля']);
         }
     }
 ?>
