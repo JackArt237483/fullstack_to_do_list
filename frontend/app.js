@@ -2,6 +2,7 @@ const taskInput = document.getElementById('taskInput');
 const addTaskButton = document.getElementById('addTaskButton');
 const taskList = document.getElementById('taskList');
 const logoutButton = document.getElementById('logoutButton')
+const profileButton = document.getElementById('profileButton')
 // Функция для получения задач
 const getTasks = async () => {
     const response = await fetch('http://localhost/sites/Block/backend/index.php');
@@ -111,15 +112,19 @@ const editTask = (li, id, currentTitle) => {
 addTaskButton.onclick = addTask;
 // Инициализация списка задач при загрузке страницы
 getTasks();
-
-if (logoutButton) {
-    logoutButton.addEventListener('click', function () {
+//проверка есть ли кнопка или она найдена или нет
+if(logoutButton){
+    logoutButton.addEventListener('click',function (){
         localStorage.removeItem('isLoggedIn')
         window.location.href = 'login.html'
     })
 }
-
-// Проверка аутентификации
-if (window.location.pathname === 'index.html' && !localStorage.getItem('isLoggedIn')) {
+profileButton.addEventListener('click',function (){
+    window.location.href = 'profile.html'
+})
+//
+if(window.location.pathname === '/index.html' && localStorage.getItem('isLoggedIn')){
     window.location.href = 'login.html'
 }
+
+

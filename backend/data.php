@@ -7,21 +7,17 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents('php://input'),true);
         $action = $data['action'] ?? null;
-
         if ($action === 'register') {
             registerUser($db,$data);
         } elseif ($action === 'login') {
             loginUser($db,$data);
         } else {
-            // Убедитесь, что здесь есть обработка некорректных действий
             echo json_encode(['error' => 'Неправильное действие. Пожалуйста, проверьте отправляемые данные.']);
         }
         exit();
     }
-
     // Функция для регистрации пользователя
-    function registerUser($db, $data): void
-    {
+    function registerUser($db, $data): void{
         // Получаем данные из POST-запроса
         $username = $data['username'] ?? null;
         $password = $data['password'] ?? null;
@@ -54,14 +50,11 @@
             echo json_encode(['error' => 'Заполните все поля']);
         }
     }
-
     // Функция для входа в систему
-    function loginUser($db,$data): void
-    {
+    function loginUser($db,$data): void{
         // Получаем данные из POST-запроса
         $username = $data['username'] ?? null;
         $password = $data['password'] ?? null;
-
         // Проверяем, что все поля заполнены
         if ($username && $password) {
             // Проверяем, существует ли пользователь с таким именем

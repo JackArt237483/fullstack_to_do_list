@@ -4,6 +4,8 @@
         const registerForm = document.getElementById('registerForm')
         const registerMessage = document.getElementById('registerMessage')
         const loginMessage = document.getElementById('loginMessage')
+        const taskButton = document.getElementById('taskButton')
+        const userForm = document.getElementById('user-form')
 
         async function postData (url = "",data = {}) {
             const response = await fetch(url, {
@@ -75,5 +77,8 @@
         }
 
 
+        taskButton.addEventListener('click',function (){
+            window.location.href = 'index.html';
+        })
     })
 
