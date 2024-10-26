@@ -18,7 +18,7 @@
 
             return response.json()
         }
-
+        //запрос вход регисртрации
         if(registerForm){
             // форма регистрации запрос
             registerForm.addEventListener('submit',function(e){
@@ -50,7 +50,7 @@
                     })
             })
         }
-
+        //запрос вход логина
         if (loginForm){
             // форма логина запрос
             loginForm.addEventListener('submit', function(e){
@@ -75,10 +75,43 @@
                     })
             })
         }
-
-
+        // переход на другую страницу
         taskButton.addEventListener('click',function (){
             window.location.href = 'index.html';
         })
+        if(userForm){
+            // Отправка данных
+            userForm.addEventListener('submit',function (e){
+                e.preventDefault()
+                const data = {
+                    action: 'update',
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    password: document.getElementById('password').value
+                }
+                postData('http://localhost/sites/Block/backend/data.php', data)
+                    .then(data => {
+                        data.success ?
+                            alert(data.message || 'Данные успешно обновлены') :
+                            alert(data.message || 'Данные не успешно не обновлены')
+                    })
+            })
+        }
+        // запрос нв изменение данных и получение
+        fetch('http://localhost/sites/Block/backend/data.php?action=getUserData')
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                        document.getElementById('username').value = data.data.username
+                        document.getElementById('email').value = data.data.email
+                        document.getElementById('phone').value = data.data.phone
+                        document.getElementById('password').value = data.data.password
+                } else{
+                    console.error(data.error);
+                    alert("Ошибка: " + data.error);
+                }
+            })
+            .catch(error => console.error('error' ,error))
     })
 

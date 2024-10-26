@@ -4,14 +4,20 @@
     global $db;
     header('Content-type: application/json');
 
+    $data = json_decode(file_get_contents('php://input'),true);
+    $action = $data['action'] ?? null;
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = json_decode(file_get_contents('php://input'),true);
-        $action = $data['action'] ?? null;
         if ($action === 'register') {
             registerUser($db,$data);
         } elseif ($action === 'login') {
             loginUser($db,$data);
-        } else {
+        } elseif ($action === 'update') {
+            updateUser($db,$data);
+        } elseif ($action === 'getUserData') {
+            getUserData($db);
+        }
+        else {
             echo json_encode(['error' => 'Неправильное действие. Пожалуйста, проверьте отправляемые данные.']);
         }
         exit();
@@ -82,4 +88,64 @@
             echo json_encode(['error' => 'Заполните все поля']);
         }
     }
+    // Функция для обновления данных в систему
+    function updateUser($db, $data): void{
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['success' => false, 'error' => 'Пользователь не авторизован']);
+        return;
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $updates = [];
+    $params = ['id' => $user_id];
+
+    if (!empty($data['username'])) {
+        $updates[] = 'username = :username';
+        $params['username'] = $data['username'];
+    }
+    if (!empty($data['email'])) {
+        $updates[] = 'email = :email';
+        $params['email'] = $data['email'];
+    }
+    if (!empty($data['phone'])) {
+        $updates[] = 'phone = :phone';
+        $params['phone'] = $data['phone'];
+    }
+    if (!empty($data['password'])) {
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+        $updates[] = 'password = :password';
+        $params['password'] = $hashedPassword;
+    }
+
+    if (!empty($updates)) {
+        $sql = 'UPDATE users SET ' . implode(', ', $updates) . ' WHERE id = :id';
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        echo json_encode(['success' => true, 'message' => 'Данные обновлены']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Нет данных для обновления']);
+    }
+}
+    // Функция для конктретных пользователей
+function getUserData($db) {
+    if (!isset($_SESSION['user_id'])) {
+        echo json_encode(['success' => false, 'error' => 'Пользователь не авторизован']);
+        return;
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $sql = 'SELECT email, phone, username FROM users WHERE id = :id';
+    $stmt = $db->prepare($sql);
+    $stmt->execute(['id' => $user_id]);
+
+    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Проверка данных и возврат результата
+    if ($userData) {
+        echo json_encode(['success' => true, 'data' => $userData]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Данные не найдены']);
+    }
+}
+
 ?>
