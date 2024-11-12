@@ -28,7 +28,7 @@
                 const phone = document.getElementById('phone').value
                 const password = document.getElementById('password').value
 
-                postData('http://localhost/sites/Block/backend/data.php',{
+                postData('http://localhost/sites/Block/backend/APIController.php',{
                     action: 'register',
                     username: username,
                     email: email,
@@ -58,7 +58,7 @@
                 const username = document.getElementById('login_username').value
                 const password = document.getElementById('login_password').value
 
-                postData('http://localhost/sites/Block/backend/data.php',{
+                postData('http://localhost/sites/Block/backend/request.php',{
                     action: 'login',
                     username: username,
                     password: password
@@ -79,6 +79,7 @@
         taskButton.addEventListener('click',function (){
             window.location.href = 'index.html';
         })
+        // переход на другую сторону
         if(userForm){
             // Отправка данных
             userForm.addEventListener('submit',function (e){
@@ -90,7 +91,7 @@
                     phone: document.getElementById('phone').value,
                     password: document.getElementById('password').value
                 }
-                postData('http://localhost/sites/Block/backend/data.php', data)
+                postData('http://localhost/sites/Block/backend/APIController.php', data)
                     .then(data => {
                         data.success ?
                             alert(data.message || 'Данные успешно обновлены') :
@@ -99,7 +100,7 @@
             })
         }
         // запрос нв изменение данных и получение
-        fetch('http://localhost/sites/Block/backend/data.php?action=getUserData')
+        fetch('http://localhost/sites/Block/backend/APIController.php?action=update')
             .then(response => response.json())
             .then(data => {
                 if(data.success){
