@@ -5,10 +5,12 @@ include 'data.php';
 
 
 global $db;
+
 class APIController
 {
     private $user;
     private $task;
+
     public function __construct($db)
     {
         $this->user = new User($db);
@@ -37,3 +39,4 @@ class APIController
         }
     }
 }
+?>

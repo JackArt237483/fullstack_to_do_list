@@ -28,7 +28,7 @@
                 const phone = document.getElementById('phone').value
                 const password = document.getElementById('password').value
 
-                postData('http://localhost/sites/Block/backend/APIController.php',{
+                postData('http://localhost/sites/Block/backend/data.php',{
                     action: 'register',
                     username: username,
                     email: email,
@@ -58,7 +58,7 @@
                 const username = document.getElementById('login_username').value
                 const password = document.getElementById('login_password').value
 
-                postData('http://localhost/sites/Block/backend/request.php',{
+                postData('http://localhost/sites/Block/backend/data.php',{
                     action: 'login',
                     username: username,
                     password: password
@@ -80,27 +80,41 @@
             window.location.href = 'index.html';
         })
         // переход на другую сторону
+        // Запрос на изменение данных пользователя
         if(userForm){
-            // Отправка данных
             userForm.addEventListener('submit',function (e){
-                e.preventDefault()
+                e.preventDefault();
+
                 const data = {
                     action: 'update',
                     username: document.getElementById('username').value,
                     email: document.getElementById('email').value,
                     phone: document.getElementById('phone').value,
                     password: document.getElementById('password').value
-                }
-                postData('http://localhost/sites/Block/backend/APIController.php', data)
+                };
+
+                // Вместо POST используем PUT для обновления данных
+                fetch('http://localhost/sites/Block/backend/data.php?action=update', {
+                    method: 'PUT',  // Используем PUT для обновления
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
                     .then(data => {
-                        data.success ?
-                            alert(data.message || 'Данные успешно обновлены') :
-                            alert(data.message || 'Данные не успешно не обновлены')
+                        if (data.success) {
+                            alert(data.message || 'Данные успешно обновлены');
+                        } else {
+                            alert(data.message || 'Ошибка при обновлении данных');
+                        }
                     })
-            })
+                    .catch(error => console.error('Error:', error));
+            });
         }
+
         // запрос нв изменение данных и получение
-        fetch('http://localhost/sites/Block/backend/APIController.php?action=update')
+        fetch('http://localhost/sites/Block/backend/data.php?action=update')
             .then(response => response.json())
             .then(data => {
                 if(data.success){
@@ -114,5 +128,7 @@
                 }
             })
             .catch(error => console.error('error' ,error))
+
+
     })
 
