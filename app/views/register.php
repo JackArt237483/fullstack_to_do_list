@@ -17,7 +17,7 @@
         <button type="submit" class="form-button">Зарегистрироваться</button>
     </form>
 
-    <p>Уже есть аккаунт? <a href="login.html" class="form-link">Войти</a></p>
+    <p>Уже есть аккаунт? <a href="login.php" class="form-link">Войти</a></p>
 
     <div id="registerMessage"></div>
 </div>

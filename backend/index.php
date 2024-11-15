@@ -18,14 +18,6 @@ class Task{
         }
     }
 
-    // Получить задачи
-    public function getTasks(){
-        $stmt = $this->db->prepare('SELECT * FROM tasks WHERE user_id = :user_id');
-        $stmt->execute(['user_id' => $this->user_id]);
-        $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode($tasks);  // Отправляем список задач в JSON
-    }
-
     // Добавить задачу
     public function postTasks(){
         $data = json_decode(file_get_contents('php://input'), true);
@@ -65,7 +57,6 @@ class Task{
                 'id' => $id,
                 'user_id' => $this->user_id
             ]);
-            echo json_encode(['success' => true]);  // Успешно обновили задачу
         } else {
             echo json_encode(['error' => 'Недостаточно данных для обновления']);  // Ошибка при обновлении
         }
@@ -77,8 +68,6 @@ class Task{
         $id = $data['id'] ?? null;
 
         if ($id) {
-            $stmt = $this->db->prepare('DELETE FROM tasks WHERE id = :id AND user_id = :user_id');
-            $stmt->execute(['id' => $id, 'user_id' => $this->user_id]);
             echo json_encode(['success' => true]);  // Успешно удалили задачу
         } else {
             echo json_encode(['error' => 'Не указана задача для удаления']);  // Ошибка при удалении

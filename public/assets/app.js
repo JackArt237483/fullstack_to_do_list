@@ -120,14 +120,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (logoutButton) {
             logoutButton.addEventListener('click', function () {
                 localStorage.removeItem('isLoggedIn')
-                window.location.href = 'login.html'
+                window.location.href = 'login.php'
             })
         }
         profileButton.addEventListener('click', function () {
-            window.location.href = 'profile.html'
+            window.location.href = 'profile.php'
         })
 //
-        if (window.location.pathname === '/index.html' && localStorage.getItem('isLoggedIn')) {
-            window.location.href = 'login.html'
+        if (window.location.pathname === '/index.php' && localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'login.php'
         }
     })

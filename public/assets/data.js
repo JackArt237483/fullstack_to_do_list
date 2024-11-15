@@ -39,7 +39,7 @@
                         if(data.success){
                             registerMessage.textContent = 'Registration successful'
                             setTimeout(()=>{
-                                window.location.href = 'login.html'
+                                window.location.href = 'login.php'
                             },2000)
                         } else {
                             registerMessage.textContent = `It,s mistake of registration ${data.error}`
@@ -67,7 +67,7 @@
                         if(data.success){
                             loginMessage.textContent = `Login user is here ${data.user}`
                             setTimeout(()=>{
-                                window.location.href = 'index.html'
+                                window.location.href = 'index.php'
                             },1000)
                         } else {
                             loginMessage.textContent = 'All info we had an error here' + data.error
@@ -77,7 +77,7 @@
         }
         // переход на другую страницу
         taskButton.addEventListener('click',function (){
-            window.location.href = 'index.html';
+            window.location.href = 'index.php';
         })
         // переход на другую сторону
         // Запрос на изменение данных пользователя

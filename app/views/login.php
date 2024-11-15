@@ -15,7 +15,7 @@
         <input type="password" id="login_password" class="login-input" placeholder="Пароль" required>
         <button type="submit" class="login-button">Войти</button>
     </form>
-    <p class="login-text">Еще нет аккаунта? <a href="register.html" class="login-link">Зарегистрируйтесь</a></p>
+    <p class="login-text">Еще нет аккаунта? <a href="register.php" class="login-link">Зарегистрируйтесь</a></p>
 
     <div id="loginMessage"></div>
 </div>
