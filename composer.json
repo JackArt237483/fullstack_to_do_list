@@ -1,0 +1,17 @@
+{
+    "name": "user/block",
+    "autoload": {
+        "psr-4": {
+            "User\\Block\\": "Block/"
+        }
+    },
+    "authors": [
+        {
+            "name": "JackArt237483",
+            "email": "vip.artem4567@mail.ru"
+        }
+    ],
+    "require": {
+        "ext-pdo": "*"
+    }
+}

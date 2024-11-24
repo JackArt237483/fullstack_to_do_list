@@ -174,3 +174,24 @@ button.update_btn:hover {
     background-color: #5a53e0;
     transform: translateY(-2px);
 }
+
+/* Стиль кнопок в форме редактирования */
+.cancel-button {
+    background-color: #ff5a5f;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cancel-button:hover {
+    background-color: #e04a4a;
+    transform: translateY(-2px);
+}
+
+.cancel-button:active {
+    transform: translateY(0);
+}
