@@ -6,39 +6,45 @@
     <title>ToDo List</title>
     <link rel="stylesheet" href="public/assets/style.css">
 </head>
-
 <body>
+<!-- Верхняя панель с навигацией -->
+<nav>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <!-- Если пользователь авторизован -->
+        <a href="index.php?action=logout">Logout</a>
+        <a href="index.php?action=todos">My Tasks</a>
+    <?php else: ?>
+        <!-- Если пользователь не авторизован -->
+        <a href="index.php?action=login">Login</a>
+        <a href="index.php?action=register">Register</a>
+    <?php endif; ?>
+</nav>
 
 <h1>ToDo List</h1>
-
 <!-- Форма добавления новой задачи -->
 <form action="index.php?action=create" method="POST">
     <input type="text" name="title" placeholder="New task" required>
     <button type="submit">Add</button>
 </form>
-
 <!-- Список задач -->
 <ul id="task-list">
     <?php if (!empty($todos) && is_array($todos)): ?>
         <?php foreach ($todos as $todo): ?>
             <li data-id="<?= $todo['id'] ?>">
-                <!-- Текст задачи -->
-                <span class="task-title"><?= htmlspecialchars($todo['title']) ?></span>
+                <span class="task-title"><?= htmlspecialchars($todo['title']) ?></span> <!-- Задача, переданная из массива -->
 
                 <?php if ($todo['is_completed']): ?>
                     <span>(Completed)</span>
                 <?php else: ?>
                     <form action="index.php?action=toggle&id=<?= $todo['id'] ?>" method="POST" style="display:inline;">
-                        <button type="submit">Complete</button>
+                        <button class="update_btn" type="submit">Complete</button>
                     </form>
                 <?php endif; ?>
 
-                <!-- Кнопка удаления задачи -->
                 <form action="index.php?action=delete&id=<?= $todo['id'] ?>" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
+                    <button class="cancel-button" type="submit">Delete</button>
                 </form>
 
-                <!-- Кнопка для перехода в режим редактирования -->
                 <button class="edit-button">Update</button>
 
                 <!-- Форма редактирования задачи (скрыта по умолчанию) -->
@@ -54,39 +60,7 @@
     <?php endif; ?>
 </ul>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const taskList = document.getElementById('task-list');
 
-        // Добавляем обработчики на все кнопки "Update"
-        taskList.querySelectorAll('.edit-button').forEach(button => {
-            button.addEventListener('click', event => {
-                const listItem = event.target.closest('li');
-                const editForm = listItem.querySelector('.edit-form');
-                const taskTitle = listItem.querySelector('.task-title');
-
-                // Скрываем текст задачи и показываем форму редактирования
-                taskTitle.style.display = 'none';
-                event.target.style.display = 'none'; // Скрываем кнопку "Update"
-                editForm.style.display = 'inline';
-            });
-        });
-
-        // Добавляем обработчики на все кнопки "Cancel"
-        taskList.querySelectorAll('.cancel-button').forEach(button => {
-            button.addEventListener('click', event => {
-                const listItem = event.target.closest('li');
-                const editForm = listItem.querySelector('.edit-form');
-                const taskTitle = listItem.querySelector('.task-title');
-                const editButton = listItem.querySelector('.edit-button');
-
-                // Показываем текст задачи и кнопку "Update", скрываем форму редактирования
-                taskTitle.style.display = 'inline';
-                editForm.style.display = 'none';
-                editButton.style.display = 'inline';
-            });
-        });
-    });
-</script>
+<script src='public/assets/app.js'></script>
 </body>
 </html>
