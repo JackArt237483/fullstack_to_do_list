@@ -3,7 +3,7 @@ body {
     background-color: #f0f4f8;
     margin: 0 auto;
     padding: 20px;
-    max-width: 600px;
+    max-width: 850px;
     width: 100%;
     color: #555;
     transition: background-color 0.5s ease;
@@ -160,7 +160,12 @@ button.edit-button{
     box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
+.task-completed{
+    border-radius: 17px;
+    background: blue;
+    color: white;
+    padding: 15px 15px;
+}
 .edit_input:focus {
     border-color: #56ccf2;
     box-shadow: 0 0 12px rgba(86, 204, 242, 0.4);
@@ -183,7 +188,7 @@ button.edit-button{
 /* Стиль кнопок в форме редактирования */
 .cancel-button {
     background-color: #ff5a5f;
-    padding: 10px 15px;
+    padding: 15px 30px;
     border-radius: 8px;
     font-size: 14px;
     color: white;

@@ -6,63 +6,51 @@ use User\Block\Models\Todo;
 
 class TodoController {
     public function index() {
-        // Проверяем и запускаем сессию, если она ещё не активна
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-        // Проверяем, авторизован ли пользователь
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=login');
             exit;
         }
 
-        $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя
-
-        // Получаем задачи текущего пользователя
-        $todos = Todo::all($userId); // Возвращает массив задач для этого пользователя
-
-        // Подключаем шаблон для отображения задач
-        include __DIR__ . '../../Views/index.php';
+        $userId = $_SESSION['user_id'];
+        $todos = Todo::all($userId);
+        include __DIR__ . '/../Views/index.php';
     }
 
-
     public function store($title) {
-        // Проверяем и запускаем сессию, если она ещё не активна
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-        // Проверяем, авторизован ли пользователь
+        session_start();
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?action=login');
             exit;
         }
 
-        $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя
-
-        // Создаем задачу для текущего пользователя
+        $userId = $_SESSION['user_id'];
         Todo::create(['title' => $title, 'user_id' => $userId]);
-
-        // Перенаправляем обратно на страницу задач
         header('Location: index.php?action=todos');
         exit;
     }
 
-    public function update($id, $data) {
-        // Обновляем задачу
-        Todo::update($id, $data);
+    public function toggle($id) {
+        $todo = Todo::getById($id);
+        $isCompleted = $todo['is_completed'] ? 0 : 1;
+        Todo::update($id, ['is_completed' => $isCompleted]);
+        if ($_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            echo json_encode(['status' => 'success']);
+            exit;
+        }
+        header('Location: index.php?action=todos');
+        exit;
+    }
 
-        // Перенаправляем обратно на страницу задач
+    public function update($id, $title) {
+        if (!empty($title)) {
+            Todo::update($id, ['title' => $title]);
+        }
         header('Location: index.php?action=todos');
         exit;
     }
 
     public function destroy($id) {
-        // Удаляем задачу
         Todo::delete($id);
-
-        // Перенаправляем обратно на страницу задач
         header('Location: index.php?action=todos');
         exit;
     }

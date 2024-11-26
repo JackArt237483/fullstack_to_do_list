@@ -8,8 +8,6 @@ use User\Block\Controllers\UserController;
 
 // Подключение к базе данных
 $pdo = new PDO('sqlite:config/identifier.sqlite');
-
-// Инициализация контроллеров
 $todoController = new TodoController($pdo);
 $userController = new UserController($pdo);
 
@@ -18,7 +16,6 @@ $action = $_GET['action'] ?? 'login';
 
 // Обработка POST-запросов
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Обрабатываем действия с задачами
     switch ($action) {
         case 'create':
             // Создание новой задачи
@@ -38,6 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $todoController->destroy($_GET['id']);
             }
             break;
+        case 'toggle';
+            // Переключение статуса задачи
+            if (isset($_GET['id'])) {
+                $todoController->toggle($_GET['id']);
+            }
+        break;
         case 'login':
             // Обработка входа
             $userController->login();

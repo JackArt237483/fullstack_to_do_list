@@ -21,7 +21,6 @@ class Todo {
     }
 
     public static function create($data) {
-        // Создание задачи с привязкой к текущему пользователю
         $db = self::connect();
         $stmt = $db->prepare('INSERT INTO todos (title, user_id) VALUES (:title, :user_id)');
         $stmt->execute([
@@ -32,15 +31,11 @@ class Todo {
 
     public static function update($id, $data) {
         $db = self::connect();
-
         if (isset($data['is_completed'])) {
-            // Обновление статуса
             $stmt = $db->prepare('UPDATE todos SET is_completed = :is_completed WHERE id = :id');
             $stmt->execute(['is_completed' => $data['is_completed'], 'id' => $id]);
         }
-
         if (isset($data['title'])) {
-            // Обновление заголовка
             $stmt = $db->prepare('UPDATE todos SET title = :title WHERE id = :id');
             $stmt->execute(['title' => $data['title'], 'id' => $id]);
         }
@@ -50,5 +45,12 @@ class Todo {
         $db = self::connect();
         $stmt = $db->prepare('DELETE FROM todos WHERE id = :id');
         $stmt->execute(['id' => $id]);
+    }
+
+    public static function getById($id) {
+        $db = self::connect();
+        $stmt = $db->prepare('SELECT * FROM todos WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch();
     }
 }
