@@ -49,7 +49,7 @@ class Todo {
 
     public static function getById($id) {
         $db = self::connect();
-        $stmt = $db->prepare('SELECT * FROM todos WHERE id = :id');
+        $stmt = $db->prepare('DELETE FROM todos WHERE id = :id');
         $stmt->execute(['id' => $id]);
         return $stmt->fetch();
     }

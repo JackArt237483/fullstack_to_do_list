@@ -1,6 +1,5 @@
 <?php
 
-
 namespace User\Block\Models;
 
 use PDO;
