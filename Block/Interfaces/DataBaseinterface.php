@@ -1,6 +1,6 @@
 <?php
-    use User\Block\Interfaces;
-    interface DataBaseinterface{
+
+    interface DataBaseInterface{
         //возращает данные первый метод
         public function query(string $sql, array $params=[]): array;
         // не возращает данные второй метод

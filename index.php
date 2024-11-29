@@ -3,13 +3,21 @@ session_start();
 
 require_once 'vendor/autoload.php';
 
+use User\Block\Services\DatabaseService;
 use User\Block\Controllers\TodoController;
 use User\Block\Controllers\UserController;
+use User\Block\Repositories\TodoRepository;
+use User\Block\Repositories\UserRepository;
+
+$databaseService = new DatabaseService();
 
 // Подключение к базе данных
-$pdo = new PDO('sqlite:config/identifier.sqlite');
-$todoController = new TodoController($pdo);
-$userController = new UserController($pdo);
+$todoRepository = new TodoRepository($databaseService); // TodoRepository будет работать с SQLite через DatabaseService
+$userRepository = new UserRepository($databaseService); // UserRepository аналогично
+
+// Создание контроллеров
+$todoController = new TodoController($todoRepository);
+$userController = new UserController($userRepository);
 
 // Определение маршрутов
 $action = $_GET['action'] ?? 'login';

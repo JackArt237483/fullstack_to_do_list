@@ -1,32 +1,30 @@
 <?php
 
 namespace User\Block\Models;
-
-use PDO;
-class User{
-    private $pdo;
-    public function __construct($pdo){
-        $this->pdo = $pdo;
+// класс который отвечает за отправку данных
+class Users{
+    private string $username;
+    private string $email;
+    private string $phone;
+    private string $password;
+    public function __construct(string $username,string $email,string $phone,string $password){
+        $this->username = $username;
+        $this->email = $email;
+        $this->phone = $phone;
+        $this->password = password_hash($password,PASSWORD_DEFAULT);
     }
-    public function login($email,$password){
-        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
-        $stmt->execute(['email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC); // данные в виде масива котоыре возращаются
-
-        if($user && password_verify($password,$user['password'])){
-            return $user;
-        }
-
-        return false;
+    public function getUserName():string{
+        return $this->username;
     }
-    public function register($username,$email,$password,$phone){
-        $stmt = $this->pdo->prepare('INSERT INTO users (username,email,password,phone) values (:username,:email,:password,:phone)');
+    public function getEmail():string{
 
-        return $stmt->execute([
-            'username' => $username,
-            'email' => $email,
-            'phone' => $phone,
-            'password' => password_hash($password, PASSWORD_DEFAULT)
-        ]);
+        return $this->email;
+    }
+    public function getPhone():string{
+        return $this->phone;
+    }
+    public function getPassword():string{
+        return $this->password;
     }
 }
+?>

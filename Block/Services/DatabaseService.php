@@ -1,4 +1,8 @@
 <?php
+    namespace User\Block\Services;
+
+    use DataBaseinterface;
+    use PDO;
     class DatabaseService implements DataBaseinterface{
         private PDO $pdo;
         public function __construct(){

@@ -3,12 +3,14 @@
 namespace User\Block\Controllers;
 
 use User\Block\Models\User;
+use User\Block\Interfaces\UserRepositoryInterface;
+use User\Block\Repositories\UserRepository;
 
 class UserController {
     private $userModel;
 
-    public function __construct($pdo) {
-        $this->userModel = new User($pdo);
+    public function __construct(UserRepositoryInterface $userRepository) {
+        $this->userRepository = $userRepository;
     }
 
     public function login() {
@@ -16,8 +18,10 @@ class UserController {
             $email = $_POST['email'];
             $password = $_POST['password'];
 
-            $user = $this->userModel->login($email, $password);
-            if ($user) {
+            $user = $this->userRepository->findByEmail($email);
+
+            // Проверка, найден ли пользователь и совпадает ли пароль
+            if ($user && $password($password,$user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 header('Location: index.php?action=todos'); // Переход на страницу задач
                 exit();
@@ -35,7 +39,9 @@ class UserController {
             $phone = $_POST['phone'];
             $password = $_POST['password'];
 
-            if ($this->userModel->register($username, $email, $password, $phone)) {
+            $user = new User($username, $email, $password, $phone);
+
+            if ($this->userRepository->save($user)) {
                 header('Location: index.php?action=login'); // Переход на страницу логина
                 exit;
             } else {
