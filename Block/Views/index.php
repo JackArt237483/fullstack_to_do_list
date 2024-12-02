@@ -32,7 +32,7 @@
 
                 <?php if ($todo['is_completed']): ?>
                     <!-- Отображение Completed -->
-                    <span class="task-completed" data-id="<?= $todo['id'] ?>">Сделанно мен</span>
+                    <span class="task-completed" data-id="<?= $todo['id'] ?>">Сделанно меня</span>
                 <?php else: ?>
                     <!-- Кнопка Complete -->
                     <form action="index.php?action=toggle&id=<?= $todo['id'] ?>" method="POST" style="display:inline;">

@@ -19,9 +19,9 @@
             $stmt->execute($params);
             return $stmt->fetchAll();
         }
-        public function execute(string $sql, array $params = []): void{
+        public function execute(string $sql, array $params = []): bool{
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute($params);
+            return $stmt->execute($params);
         }
     }
 ?>

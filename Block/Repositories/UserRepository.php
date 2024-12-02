@@ -1,6 +1,5 @@
 <?php
     namespace User\Block\Repositories;
-    use PDO;
     use User\Block\Interfaces\UserRepositoryInterface;
     use User\Block\Models\Users;
     use User\Block\Services\DatabaseService;
@@ -27,4 +26,5 @@
                 $data
             );
         }
+
     }

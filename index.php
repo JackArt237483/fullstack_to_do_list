@@ -8,7 +8,6 @@ use User\Block\Controllers\TodoController;
 use User\Block\Controllers\UserController;
 use User\Block\Repositories\TodoRepository;
 use User\Block\Repositories\UserRepository;
-
 $databaseService = new DatabaseService();
 
 // Подключение к базе данных
@@ -88,4 +87,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
     }
 }
-?>
