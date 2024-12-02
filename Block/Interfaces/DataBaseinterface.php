@@ -1,5 +1,7 @@
 <?php
 
+    namespace User\Block\Interfaces;
+
     interface DataBaseInterface{
         //возращает данные первый метод
         public function query(string $sql, array $params=[]): array;

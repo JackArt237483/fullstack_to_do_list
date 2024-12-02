@@ -1,4 +1,6 @@
 <?php
+
+namespace User\Block\Middleware;
   class AuthMiddleware{
       public static function check():void{
           if(!isset($_SESSION['user_id'])){

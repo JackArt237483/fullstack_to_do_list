@@ -12,8 +12,8 @@ use User\Block\Repositories\UserRepository;
 $databaseService = new DatabaseService();
 
 // Подключение к базе данных
-$todoRepository = new TodoRepository($databaseService); // TodoRepository будет работать с SQLite через DatabaseService
-$userRepository = new UserRepository($databaseService); // UserRepository аналогично
+$todoRepository = new TodoRepository($databaseService);
+$userRepository = new UserRepository($databaseService);
 
 // Создание контроллеров
 $todoController = new TodoController($todoRepository);
@@ -43,12 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $todoController->destroy($_GET['id']);
             }
             break;
-        case 'toggle';
+        case 'toggle':
             // Переключение статуса задачи
             if (isset($_GET['id'])) {
                 $todoController->toggle($_GET['id']);
             }
-        break;
+            break;
         case 'login':
             // Обработка входа
             $userController->login();
@@ -88,3 +88,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
     }
 }
+?>

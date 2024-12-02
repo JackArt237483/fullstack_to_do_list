@@ -1,9 +1,11 @@
 <?php
     namespace User\Block\Services;
 
-    use DataBaseinterface;
+
     use PDO;
-    class DatabaseService implements DataBaseinterface{
+    use User\Block\Interfaces\DataBaseInterface;
+
+    class DatabaseService implements DataBaseInterface {
         private PDO $pdo;
         public function __construct(){
             $dbPath = __DIR__ . '/../../config/identifier.sqlite';

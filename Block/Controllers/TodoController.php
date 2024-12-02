@@ -2,22 +2,25 @@
 
 namespace User\Block\Controllers;
 
-use TodoRepositoryInterface;
-use AuthMiddleware;
+use User\Block\Interfaces\TodoRepositoryInterface;
+use User\Block\Middleware\AuthMiddleware;
 
 class TodoController {
     private TodoRepositoryInterface $todoRepository;
-    public function __construct(TodoRepositoryInterface $todoRepository){
+
+    public function __construct(TodoRepositoryInterface $todoRepository) {
         $this->todoRepository = $todoRepository;
     }
-    public function index():void {
+
+    public function index(): void {
         AuthMiddleware::check();
 
         $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя из сессии
-        $todos = $this->todoRepository->getAllBuUserId($userId);
+        $todos = $this->todoRepository->getAllByUserId($userId); // Исправлен метод (getAllBuUserId на getAllByUserId)
 
         include __DIR__ . '/../Views/index.php';
     }
+
     public function store($title) {
         AuthMiddleware::check();
         $userId = $_SESSION['user_id'];
@@ -25,38 +28,39 @@ class TodoController {
         header('Location: index.php?action=todos');
         exit;
     }
-    public function update(int $id, string $title = null, ?bool $isCompleted = null):void {
+
+    public function update(int $id, string $title = null, ?bool $isCompleted = null): void {
         AuthMiddleware::check();
 
         $data = [];
         if (!is_null($title)) {
             $data['title'] = $title;
         }
-        //проверка на наличие заголовки
-        if(!is_null($isCompleted)) {
+        if (!is_null($isCompleted)) {
             $data['is_completed'] = $isCompleted;
         }
-        //проверка на наличие завершения
-        if(!empty($data)){
-            $this->todoRepository->update($id,$data);
+
+        if (!empty($data)) {
+            $this->todoRepository->update($id, $data);
         }
-        // проверка то что все в порядке
+
         header('Location: index.php?action=todos');
         exit;
     }
-    public function toggle($id) {
 
+    public function toggle($id) {
         AuthMiddleware::check();
 
         $todo = $this->todoRepository->getById($id);
-        if($todo){
-
+        if ($todo) {
+            $isCompleted = $todo['is_completed'] ? 0 : 1;
+            $this->todoRepository->update($id, ['is_completed' => $isCompleted]);
         }
-        $isCompleted = $todo['is_completed'] ? 0 : 1;
-        $this->todoRepository->update($id, ['is_completed' => $isCompleted]);
+
         header('Location: index.php?action=todos');
         exit;
     }
+
     public function destroy($id) {
         AuthMiddleware::check();
 

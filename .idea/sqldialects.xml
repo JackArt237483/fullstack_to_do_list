@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Block/Controllers/TodoController.php" dialect="SQLite" />
-    <file url="file://$PROJECT_DIR$/Block/Models/User.php" dialect="SQLite" />
+    <file url="file://$PROJECT_DIR$/Block/Models/Users.php" dialect="SQLite" />
     <file url="file://$PROJECT_DIR$/Block/Repositories/TodoRepository.php" dialect="SQLite" />
     <file url="file://$PROJECT_DIR$/Block/Repositories/UserRepository.php" dialect="SQLite" />
     <file url="file://$PROJECT_DIR$/config/db.php" dialect="SQLite" />

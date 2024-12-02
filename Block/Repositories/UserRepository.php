@@ -3,29 +3,28 @@
     use PDO;
     use User\Block\Interfaces\UserRepositoryInterface;
     use User\Block\Models\Users;
+    use User\Block\Services\DatabaseService;
 
-    class UserRepository implements UserRepositoryInterface{
-        private PDO $pdo;
-        // использовать подклбчение только один раз
-        public function __construct(PDO $pdo){
-            $this->pdo = $pdo;
+    class UserRepository implements UserRepositoryInterface {
+        private DatabaseService $db;
+        public function __construct(DatabaseService $db) {
+            $this->db = $db;
         }
-        public function findByEmail(string $email): ?array{
-
-            $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
-            $stmt->execute(['email' => $email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC); // данные в виде масива котоыре возращаются
-            return $user ?: null;
+        public function findByEmail(string $email): ?array {
+            $result = $this->db->query('SELECT * FROM users WHERE email = :email', ['email' => $email]);
+            return $result[0] ?? null;
         }
-        public function save(Users $user): bool{
-            $stmt = $this->pdo->prepare('INSERT INTO users (username,email,password,phone) values (:username,:email,:password,:phone)');
-
-            return $stmt->execute([
+        public function save(Users $user): bool {
+            $data = [
                 'username' => $user->getUserName(),
                 'email' => $user->getEmail(),
-                'phone' => $user->getUserName(),
+                'phone' => $user->getPhone(),
                 'password' => $user->getPassword()
-            ]);
+            ];
+            // Пример SQL-запроса для вставки нового пользователя
+            return $this->db->execute(
+                'INSERT INTO users (username, email, phone, password) VALUES (:username, :email, :phone, :password)',
+                $data
+            );
         }
     }
-?>

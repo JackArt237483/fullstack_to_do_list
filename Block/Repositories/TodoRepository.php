@@ -1,12 +1,12 @@
 <?php
 
 namespace User\Block\Repositories;
-use DataBaseinterface;
-use TodoRepositoryInterface;
+use User\Block\Interfaces\DatabaseInterface;
+use User\Block\Interfaces\TodoRepositoryInterface;
 
-class TodoRepository implements TodoRepositoryInterface{
-    private DataBaseinterface $db;
-    public function __construct(DataBaseinterface $db)
+class TodoRepository implements TodoRepositoryInterface {
+    private DatabaseInterface $db;
+    public function __construct(DatabaseInterface $db)
     {
         $this->db = $db;
     }
@@ -26,14 +26,23 @@ class TodoRepository implements TodoRepositoryInterface{
     }
     public function update(int $id, array $data): void
     {
+        $setPart = [];
+        $params = ['id' => $id]; // обязательно добавляем id в параметры
+
         foreach ($data as $key => $value) {
-            $this->db->execute(
-                'UPDATE todos SET $key = :value WHERE id = :id',
-                ['value' => $value, 'id' => $id]
-            );
+            $setPart[] = "$key = :$key";
+            $params[$key] = $value; // добавляем параметр для каждого поля
+        }
+
+        $setString = implode(', ', $setPart); // Собираем строку SET
+
+        $sql = "UPDATE todos SET $setString WHERE id = :id"; // Собираем полный SQL запрос
+
+        $this->db->execute($sql, $params); // Выполняем запрос с параметрами
     }
-    }
-    public function delete(int $id): void{
+    public function delete(int $id): void
+    {
+        
         $this->db->execute('DELETE FROM todos WHERE id = :id', ['id' => $id]);
     }
     public function getById(int $id): ?array
@@ -42,5 +51,4 @@ class TodoRepository implements TodoRepositoryInterface{
         return $result[0] ?? null;
     }
 }
-
 ?>
