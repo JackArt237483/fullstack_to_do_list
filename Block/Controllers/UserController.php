@@ -4,10 +4,9 @@ namespace User\Block\Controllers;
 
 use User\Block\Models\Users;
 use User\Block\Interfaces\UserRepositoryInterface;
-use User\Block\Repositories\UserRepository;
 
 class UserController {
-    private $userRepository; // Добавлено свойство для репозитория
+    private $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository) {
         $this->userRepository = $userRepository;
@@ -20,16 +19,15 @@ class UserController {
 
             $user = $this->userRepository->findByEmail($email);
 
-            // Проверка, найден ли пользователь и совпадает ли пароль
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
-                header('Location: index.php?action=todos'); // Переход на страницу задач
+                header('Location: index.php?action=todos');
                 exit();
             } else {
                 echo 'Invalid email or password!';
             }
         }
-        include __DIR__ . '/../Views/login.php'; // Исправленный путь
+        include __DIR__ . '/../Views/login.php';
     }
 
     public function register() {
@@ -39,21 +37,22 @@ class UserController {
             $phone = $_POST['phone'];
             $password = $_POST['password'];
 
-            $user = new Users($username, $email, $phone,$password,);
+            $user = new Users($username, $email, $phone, $password);
 
             if ($this->userRepository->save($user)) {
-                header('Location: index.php?action=login'); // Переход на страницу логина
+                header('Location: index.php?action=login');
                 exit;
             } else {
                 echo 'Registration failed!';
             }
         }
-        include __DIR__ . '/../Views/register.php'; // Исправленный путь
+        include __DIR__ . '/../Views/register.php';
     }
 
     public function logout() {
         session_destroy();
-        header('Location: index.php?action=login'); // Переход на страницу логина
+        header('Location: index.php?action=login');
         exit;
     }
 }
+?>

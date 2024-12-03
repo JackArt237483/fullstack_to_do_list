@@ -1,89 +1,81 @@
 <?php
-session_start();
 
-require_once 'vendor/autoload.php';
+    session_start();
 
-use User\Block\Services\DatabaseService;
-use User\Block\Controllers\TodoController;
-use User\Block\Controllers\UserController;
-use User\Block\Repositories\TodoRepository;
-use User\Block\Repositories\UserRepository;
-$databaseService = new DatabaseService();
+    require_once 'vendor/autoload.php';
 
-// Подключение к базе данных
-$todoRepository = new TodoRepository($databaseService);
-$userRepository = new UserRepository($databaseService);
+    use User\Block\Services\DatabaseService;
+    use User\Block\Services\Router;
+    use User\Block\Controllers\TodoController;
+    use User\Block\Controllers\UserController;
+    use User\Block\Repositories\TodoRepository;
+    use User\Block\Repositories\UserRepository;
 
-// Создание контроллеров
-$todoController = new TodoController($todoRepository);
-$userController = new UserController($userRepository);
+    // Инициализация сервисов
+    $databaseService = new DatabaseService();
+    $todoRepository = new TodoRepository($databaseService);
+    $userRepository = new UserRepository($databaseService);
 
-// Определение маршрутов
-$action = $_GET['action'] ?? 'login';
+    // Контроллеры
+    $todoController = new TodoController($todoRepository);
+    $userController = new UserController($userRepository);
 
-// Обработка POST-запросов
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    switch ($action) {
-        case 'create':
-            // Создание новой задачи
-            if (!empty($_POST['title']) && isset($_SESSION['user_id'])) {
-                $todoController->store($_POST['title']);
-            }
-            break;
-        case 'update':
-            // Обновление задачи
-            if (isset($_GET['id']) && !empty($_POST['title'])) {
-                $todoController->update($_GET['id'], $_POST['title']);
-            }
-            break;
-        case 'delete':
-            // Удаление задачи
-            if (isset($_GET['id'])) {
-                $todoController->destroy($_GET['id']);
-            }
-            break;
-        case 'toggle':
-            // Переключение статуса задачи
-            if (isset($_GET['id'])) {
-                $todoController->toggle($_GET['id']);
-            }
-            break;
-        case 'login':
-            // Обработка входа
-            $userController->login();
-            break;
-        case 'register':
-            // Обработка регистрации
-            $userController->register();
-            break;
-    }
-} else {
-    // Обработка GET-запросов
-    switch ($action) {
-        case 'todos':
-            // Показ задач, если пользователь авторизован
-            if (isset($_SESSION['user_id'])) {
-                $todoController->index();
-            } else {
-                header('Location: index.php?action=login');
-                exit();
-            }
-            break;
-        case 'login':
-            // Страница логина
-            $userController->login();
-            break;
-        case 'register':
-            // Страница регистрации
-            $userController->register();
-            break;
-        case 'logout':
-            // Выход из системы
-            $userController->logout();
-            break;
-        default:
-            // Редирект на страницу логина по умолчанию
-            header('Location: index.php?action=login');
-            exit();
-    }
-}
+    // Инициализация роутера
+    $router = new Router();
+
+    // Добавляем маршруты
+    // Для задач
+    $router->addRoute('GET', '/todos', function() use ($todoController) {
+        $todoController->index();
+    });
+
+    $router->addRoute('POST', '/create', function() use ($todoController) {
+        if (!empty($_POST['title'])) {
+            $todoController->store($_POST['title']);
+        }
+    });
+
+    $router->addRoute('POST', '/update', function() use ($todoController) {
+        if (isset($_GET['id']) && !empty($_POST['title'])) {
+            $todoController->update($_GET['id'], $_POST['title']);
+        }
+    });
+
+    $router->addRoute('POST', '/delete', function() use ($todoController) {
+        if (isset($_GET['id'])) {
+            $todoController->destroy($_GET['id']);
+        }
+    });
+
+    $router->addRoute('POST', '/toggle', function() use ($todoController) {
+        if (isset($_GET['id'])) {
+            $todoController->toggle($_GET['id']);
+        }
+    });
+
+    // Для пользователей
+    $router->addRoute('GET', '/login', function() use ($userController) {
+        $userController->login();
+    });
+
+    $router->addRoute('POST', '/login', function() use ($userController) {
+        $userController->login();
+    });
+
+    $router->addRoute('GET', '/register', function() use ($userController) {
+        $userController->register();
+    });
+
+    $router->addRoute('POST', '/register', function() use ($userController) {
+        $userController->register();
+    });
+
+    $router->addRoute('GET', '/logout', function() use ($userController) {
+        $userController->logout();
+    });
+
+    // Обработка запроса
+    $action = $_GET['action'] ?? 'login';
+    $router->dispatch($_SERVER['REQUEST_METHOD'], "/$action");
+
+?>

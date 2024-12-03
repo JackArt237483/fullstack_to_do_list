@@ -14,10 +14,8 @@ class TodoController {
 
     public function index(): void {
         AuthMiddleware::check();
-
-        $userId = $_SESSION['user_id']; // Получаем ID текущего пользователя из сессии
-        $todos = $this->todoRepository->getAllByUserId($userId); // Исправлен метод (getAllBuUserId на getAllByUserId)
-
+        $userId = $_SESSION['user_id'];
+        $todos = $this->todoRepository->getAllByUserId($userId);
         include __DIR__ . '/../Views/index.php';
     }
 
@@ -63,7 +61,6 @@ class TodoController {
 
     public function destroy($id) {
         AuthMiddleware::check();
-
         $this->todoRepository->delete($id);
         header('Location: index.php?action=todos');
         exit;
