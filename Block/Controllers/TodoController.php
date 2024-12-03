@@ -3,13 +3,23 @@
 namespace User\Block\Controllers;
 
 use User\Block\Interfaces\TodoRepositoryInterface;
+use User\Block\Interfaces\RouteConfigurable;
+use User\Block\Services\Router;
 use User\Block\Middleware\AuthMiddleware;
 
-class TodoController {
+class TodoController implements RouteConfigurable {
     private TodoRepositoryInterface $todoRepository;
 
     public function __construct(TodoRepositoryInterface $todoRepository) {
         $this->todoRepository = $todoRepository;
+    }
+
+    public function registerRoutes(Router $router): void {
+        $router->addRoute('GET', '/todos', [$this, 'index']);
+        $router->addRoute('POST', '/create', [$this, 'store']);
+        $router->addRoute('POST', '/update', [$this, 'update']);
+        $router->addRoute('POST', '/delete', [$this, 'destroy']);
+        $router->addRoute('POST', '/toggle', [$this, 'toggle']);
     }
 
     public function index(): void {
@@ -19,26 +29,35 @@ class TodoController {
         include __DIR__ . '/../Views/index.php';
     }
 
-    public function store($title) {
+    public function store(array $params): void {
         AuthMiddleware::check();
         $userId = $_SESSION['user_id'];
-        $this->todoRepository->create(['title' => $title, 'user_id' => $userId]);
+        $title = $params['title'] ?? null;
+
+        if ($title) {
+            $this->todoRepository->create(['title' => $title, 'user_id' => $userId]);
+        }
+
         header('Location: index.php?action=todos');
         exit;
     }
 
-    public function update(int $id, string $title = null, ?bool $isCompleted = null): void {
+    public function update(array $params): void {
         AuthMiddleware::check();
 
-        $data = [];
-        if (!is_null($title)) {
-            $data['title'] = $title;
-        }
-        if (!is_null($isCompleted)) {
-            $data['is_completed'] = $isCompleted;
-        }
+        $id = $params['id'] ?? null;
+        $title = $params['title'] ?? null;
+        $isCompleted = isset($params['is_completed']) ? (bool)$params['is_completed'] : null;
 
-        if (!empty($data)) {
+        if ($id) {
+            $data = [];
+            if ($title !== null) {
+                $data['title'] = $title;
+            }
+            if ($isCompleted !== null) {
+                $data['is_completed'] = $isCompleted;
+            }
+
             $this->todoRepository->update($id, $data);
         }
 
@@ -46,22 +65,32 @@ class TodoController {
         exit;
     }
 
-    public function toggle($id) {
+    public function toggle(array $params): void {
         AuthMiddleware::check();
 
-        $todo = $this->todoRepository->getById($id);
-        if ($todo) {
-            $isCompleted = $todo['is_completed'] ? 0 : 1;
-            $this->todoRepository->update($id, ['is_completed' => $isCompleted]);
+        $id = $params['id'] ?? null;
+
+        if ($id) {
+            $todo = $this->todoRepository->getById($id);
+            if ($todo) {
+                $isCompleted = $todo['is_completed'] ? 0 : 1;
+                $this->todoRepository->update($id, ['is_completed' => $isCompleted]);
+            }
         }
 
         header('Location: index.php?action=todos');
         exit;
     }
 
-    public function destroy($id) {
+    public function destroy(array $params): void {
         AuthMiddleware::check();
-        $this->todoRepository->delete($id);
+
+        $id = $params['id'] ?? null;
+
+        if ($id) {
+            $this->todoRepository->delete($id);
+        }
+
         header('Location: index.php?action=todos');
         exit;
     }

@@ -2,20 +2,30 @@
 
 namespace User\Block\Controllers;
 
-use User\Block\Models\Users;
+use User\Block\Interfaces\RouteConfigurable;
 use User\Block\Interfaces\UserRepositoryInterface;
+use User\Block\Services\Router;
+use User\Block\Models\Users;
 
-class UserController {
-    private $userRepository;
+class UserController implements RouteConfigurable {
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository) {
         $this->userRepository = $userRepository;
     }
 
-    public function login() {
+    public function registerRoutes(Router $router): void {
+        $router->addRoute('GET', '/login', [$this, 'login']);
+        $router->addRoute('POST', '/login', [$this, 'login']);
+        $router->addRoute('GET', '/register', [$this, 'register']);
+        $router->addRoute('POST', '/register', [$this, 'register']);
+        $router->addRoute('GET', '/logout', [$this, 'logout']);
+    }
+
+    public function login(array $params): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $email = $params['email'] ?? null;
+            $password = $params['password'] ?? null;
 
             $user = $this->userRepository->findByEmail($email);
 
@@ -30,12 +40,12 @@ class UserController {
         include __DIR__ . '/../Views/login.php';
     }
 
-    public function register() {
+    public function register(array $params): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $phone = $_POST['phone'];
-            $password = $_POST['password'];
+            $username = $params['username'] ?? null;
+            $email = $params['email'] ?? null;
+            $phone = $params['phone'] ?? null;
+            $password = $params['password'] ?? null;
 
             $user = new Users($username, $email, $phone, $password);
 
@@ -49,7 +59,7 @@ class UserController {
         include __DIR__ . '/../Views/register.php';
     }
 
-    public function logout() {
+    public function logout(array $params): void {
         session_destroy();
         header('Location: index.php?action=login');
         exit;
