@@ -5,31 +5,38 @@ class Router {
     private array $routes = [];
 
     public function addRoute(string $method, string $path, callable $handler): void {
-        $this->routes[strtoupper($method)][] = [
-            'path' => $path,
-            'handler' => $handler
-        ];
+        $this->routes[strtoupper($method)][$path] = $handler;
     }
 
     public function dispatch(string $method, string $path): void {
         $method = strtoupper($method);
 
-        if (isset($this->routes[$method])) {
-            foreach ($this->routes[$method] as $route) {
-                $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $route['path']);
-                $pattern = "#^$pattern$#";
+        if (isset($this->routes[$method][$path])) {
+            $handler = $this->routes[$method][$path];
+            $requestData = array_merge($_GET, $_POST);
 
-                if (preg_match($pattern, $path, $matches)) {
-                    $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                    $params = array_merge($params, $_GET, $_POST); // Передача всех параметров
-                    call_user_func_array($route['handler'], [$params]);
-                    return;
-                }
+            $arguments = [];
+
+            // Определяем параметры вызываемого обработчика
+            if (is_array($handler)) {
+                // Это метод класса
+                $reflection = new \ReflectionMethod($handler[0], $handler[1]);
+            } else {
+                // Это функция или Closure
+                $reflection = new \ReflectionFunction($handler);
             }
-        }
 
-        http_response_code(404);
-        echo 'Not Found';
+            foreach ($reflection->getParameters() as $param) {
+                $name = $param->getName();
+                $arguments[] = $requestData[$name] ?? null;
+            }
+
+            call_user_func_array($handler, $arguments);
+        } else {
+            http_response_code(404);
+            echo '404 - Not Found';
+        }
     }
 }
+
 ?>

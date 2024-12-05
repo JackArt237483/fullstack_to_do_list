@@ -2,13 +2,14 @@
 
 namespace User\Block\Controllers;
 
-use User\Block\Interfaces\RouteConfigurable;
-use User\Block\Interfaces\UserRepositoryInterface;
-use User\Block\Services\Router;
 use User\Block\Models\Users;
+use User\Block\Interfaces\UserRepositoryInterface;
+use User\Block\Interfaces\RouteConfigurable;
+use User\Block\Services\Router;
+
 
 class UserController implements RouteConfigurable {
-    private UserRepositoryInterface $userRepository;
+    private $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository) {
         $this->userRepository = $userRepository;
@@ -22,10 +23,10 @@ class UserController implements RouteConfigurable {
         $router->addRoute('GET', '/logout', [$this, 'logout']);
     }
 
-    public function login(array $params): void {
+    public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $params['email'] ?? null;
-            $password = $params['password'] ?? null;
+            $email = $_POST['email'];
+            $password = $_POST['password'];
 
             $user = $this->userRepository->findByEmail($email);
 
@@ -40,12 +41,12 @@ class UserController implements RouteConfigurable {
         include __DIR__ . '/../Views/login.php';
     }
 
-    public function register(array $params): void {
+    public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $params['username'] ?? null;
-            $email = $params['email'] ?? null;
-            $phone = $params['phone'] ?? null;
-            $password = $params['password'] ?? null;
+            $username = $_POST['username'];
+            $email = $_POST['email'];
+            $phone = $_POST['phone'];
+            $password = $_POST['password'];
 
             $user = new Users($username, $email, $phone, $password);
 
@@ -59,7 +60,7 @@ class UserController implements RouteConfigurable {
         include __DIR__ . '/../Views/register.php';
     }
 
-    public function logout(array $params): void {
+    public function logout() {
         session_destroy();
         header('Location: index.php?action=login');
         exit;

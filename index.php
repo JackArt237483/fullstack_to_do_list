@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 require_once 'vendor/autoload.php';
@@ -10,7 +9,6 @@ use User\Block\Controllers\TodoController;
 use User\Block\Controllers\UserController;
 use User\Block\Repositories\TodoRepository;
 use User\Block\Repositories\UserRepository;
-use User\Block\Interfaces\RouteConfigurable;
 
 // Инициализация сервисов
 $databaseService = new DatabaseService();
@@ -24,15 +22,14 @@ $userController = new UserController($userRepository);
 // Инициализация роутера
 $router = new Router();
 
-// Регистрация маршрутов
+// Регистрация маршрутов через контроллеры
 foreach ([$todoController, $userController] as $controller) {
-    if ($controller instanceof RouteConfigurable) {
+    if ($controller instanceof \User\Block\Interfaces\RouteConfigurable) {
         $controller->registerRoutes($router);
     }
 }
 
 // Обработка запроса
-$path = $_GET['action'] ?? '/';
-$router->dispatch($_SERVER['REQUEST_METHOD'], "/$path");
-
+$action = $_GET['action'] ?? 'login';
+$router->dispatch($_SERVER['REQUEST_METHOD'], "/$action");
 ?>
