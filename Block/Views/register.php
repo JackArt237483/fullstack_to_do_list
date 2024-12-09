@@ -22,6 +22,12 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
+        <label for="roles">Роли:</label>
+        <select name="roles[]">
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        </select>
+
         <button type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="index.php?action=login">Login</a></p>

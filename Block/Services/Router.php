@@ -20,6 +20,7 @@ class Router {
             // Определяем параметры вызываемого обработчика
             if (is_array($handler)) {
                 // Это метод класса
+
                 $reflection = new \ReflectionMethod($handler[0], $handler[1]);
             } else {
                 // Это функция или Closure

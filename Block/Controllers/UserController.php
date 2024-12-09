@@ -7,9 +7,8 @@ use User\Block\Interfaces\UserRepositoryInterface;
 use User\Block\Interfaces\RouteConfigurable;
 use User\Block\Services\Router;
 
-
 class UserController implements RouteConfigurable {
-    private $userRepository;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository) {
         $this->userRepository = $userRepository;
@@ -32,6 +31,7 @@ class UserController implements RouteConfigurable {
 
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
+                $_SESSION['roles'] = $this->userRepository->getUserRoles($user['id']); // Сохраняем роли в сессии
                 header('Location: index.php?action=todos');
                 exit();
             } else {
@@ -47,12 +47,13 @@ class UserController implements RouteConfigurable {
             $email = $_POST['email'];
             $phone = $_POST['phone'];
             $password = $_POST['password'];
+            $roles = $_POST['roles'] ?? []; // Получаем роли из формы
 
-            $user = new Users($username, $email, $phone, $password);
+            $user = new Users($username, $email, $phone, $password, $roles);
 
             if ($this->userRepository->save($user)) {
                 header('Location: index.php?action=login');
-                exit;
+                exit();
             } else {
                 echo 'Registration failed!';
             }
@@ -66,4 +67,5 @@ class UserController implements RouteConfigurable {
         exit;
     }
 }
+
 ?>

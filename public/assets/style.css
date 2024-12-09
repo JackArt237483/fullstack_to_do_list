@@ -201,7 +201,82 @@ button.edit-button{
     background-color: #e04a4a;
     transform: translateY(-2px);
 }
+.select_form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+input, select, button {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+input {
+    border: 1px solid #dde2e7;
+    background-color: #f9fafc;
+}
+
+input:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
+    background-color: #fff;
+}
+
+select {
+    border: 1px solid #dde2e7;
+    background-color: #f9fafc;
+}
+
+select:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
+    background-color: #fff;
+}
+
+button {
+    background-color: #6c63ff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #5a53e0;
+    transform: translateY(-3px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
 
 .cancel-button:active {
     transform: translateY(0);
+}
+.link_logout {
+    background-color: #00a7ff;
+    padding: 12px 24px;
+    color: #f3e8d4;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }

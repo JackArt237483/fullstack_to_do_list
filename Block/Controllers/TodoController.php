@@ -34,19 +34,34 @@ class TodoController implements RouteConfigurable
         include __DIR__ . '/../Views/index.php';
     }
 
-    public function store(string $title): void
+    public function store(string $title, ?string $category= null, ?int $priority = null ): void
     {
         AuthMiddleware::check();
         $userId = $_SESSION['user_id'];
-        $this->todoRepository->create(['title' => $title, 'user_id' => $userId]);
+
+        $data = [
+            'title' => $title,
+            'user_id' => $userId,
+            'category' => $category,
+            'priority' => $priority,
+        ];
+
+        $this->todoRepository->create($data);
         header('Location: index.php?action=todos');
         exit;
     }
 
-    public function update(int $id, string $title): void
+    public function update(int $id,string $title, ?string $category= null, ?int $priority = null ): void
     {
         AuthMiddleware::check();
-        $this->todoRepository->update($id, ['title' => $title]);
+
+        $data = [
+            'title' => $title,
+            'category' => $category,
+            'priority' => $priority,
+        ];
+
+        $this->todoRepository->update($id,$data);
         header('Location: index.php?action=todos');
         exit;
     }

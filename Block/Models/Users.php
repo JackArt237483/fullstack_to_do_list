@@ -7,11 +7,13 @@ class Users{
     private string $email;
     private string $phone;
     private string $password;
-    public function __construct(string $username,string $email,string $phone,string $password){
+    private array $roles; //Хранит массив ролей пользователей
+    public function __construct(string $username,string $email,string $phone,string $password,array $roles = []){
         $this->username = $username;
         $this->email = $email;
         $this->phone = $phone;
         $this->password = password_hash($password,PASSWORD_DEFAULT);
+        $this->roles = $roles;
     }
     public function getUserName():string{
         return $this->username;
@@ -26,5 +28,12 @@ class Users{
     public function getPassword():string{
         return $this->password;
     }
+    public function getRoles(): array{
+        return $this->roles;
+    }
+    public function setRoles(array $roles): array{
+        $this->roles = $roles; // функция для хранения ролей пользователся
+    }
+
 }
 ?>

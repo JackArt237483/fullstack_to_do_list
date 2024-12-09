@@ -13,17 +13,18 @@ class TodoRepository implements TodoRepositoryInterface {
     public function getAllByUserId(int $userId): array
     {
         return $this->db->query(
-            'SELECT * FROM todos WHERE user_id = :user_id ORDER BY created_at DESC',
+            'SELECT * FROM todos WHERE user_id = :user_id ORDER BY priority ASC ,created_at DESC',
             ['user_id' => $userId]
         );
     }
     public function create(array $data): void
     {
         $this->db->execute(
-            'INSERT INTO todos (title, user_id) VALUES (:title, :user_id)',
+            'INSERT INTO todos (title, user_id, category, priority) VALUES (:title, :user_id, :category, :priority)',
             $data
         );
     }
+
     public function update(int $id, array $data): void
     {
         $setPart = [];
@@ -50,5 +51,6 @@ class TodoRepository implements TodoRepositoryInterface {
         $result = $this->db->query('SELECT * FROM todos WHERE id = :id', ['id' => $id]);
         return $result[0] ?? null;
     }
+
 }
 ?>
