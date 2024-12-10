@@ -24,7 +24,6 @@ class TodoRepository implements TodoRepositoryInterface {
             $data
         );
     }
-
     public function update(int $id, array $data): void
     {
         $setPart = [];

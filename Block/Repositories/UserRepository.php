@@ -7,16 +7,13 @@ use User\Block\Services\DatabaseService;
 
 class UserRepository implements UserRepositoryInterface {
     private DatabaseService $db;
-
     public function __construct(DatabaseService $db) {
         $this->db = $db;
     }
-
     public function findByEmail(string $email): ?array {
         $result = $this->db->query('SELECT * FROM users WHERE email = :email', ['email' => $email]);
         return $result[0] ?? null;
     }
-
     public function save(Users $user): bool {
         $data = [
             'username' => $user->getUserName(),
@@ -24,7 +21,6 @@ class UserRepository implements UserRepositoryInterface {
             'phone' => $user->getPhone(),
             'password' => $user->getPassword()
         ];
-
         $this->db->execute(
             'INSERT INTO users (username, email, phone, password) VALUES (:username, :email, :phone, :password)',
             $data
@@ -39,7 +35,6 @@ class UserRepository implements UserRepositoryInterface {
 
         return true;
     }
-
     public function assignRoles(int $userId, array $roleIds): bool {
         foreach ($roleIds as $roleId) {
             $this->db->execute(
@@ -49,7 +44,6 @@ class UserRepository implements UserRepositoryInterface {
         }
         return true;
     }
-
     public function getUserRoles(int $userId): array {
         $result = $this->db->query(
             'SELECT r.name FROM roles r
@@ -59,6 +53,26 @@ class UserRepository implements UserRepositoryInterface {
         );
 
         return array_column($result, 'name');
+    }
+    public function findById(int $id): ?array {
+        $result = $this->db->query('SELECT * FROM users WHERE id = :id', ['id' => $id]);
+        return $result[0] ?? null;
+    }
+    public function updateUser(Users $user): bool{
+        return $this->db->execute(
+            "UPDATE users SET 
+                 username = :username, 
+                 email = :email, 
+                 phone = :phone, 
+                 password = :password
+                WHERE id = :id"
+            ,[
+               ':username' => $user->getUserName(),
+               ':email' => $user->getEmail(),
+               ':phone' => $user->getPhone(),
+               ':password' => $user->getPassword(),
+                ':id' => $user->getId()
+        ]);
     }
 }
 

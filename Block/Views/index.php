@@ -11,6 +11,7 @@
 <nav>
     <?php if (isset($_SESSION['user_id'])): ?>
         <a class="link_logout" href="index.php?action=logout">Logout</a>
+        <a class="link_logout" href="index.php?action=account">Personal account</a>
     <?php endif; ?>
 </nav>
 
